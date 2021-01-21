@@ -3,11 +3,11 @@
 
 # Neotoma Recommender
 
-Project to create a pipeline that uses Recommendation Systems to recommend a Throughput Article to the Neotoma Database.
+Project to create a pipeline that uses Graph Recommendation Systems to recommend whether Throughput Article is of interest to the Neotoma Database.
 
-Using NLP parsed text and a Data Science approach, identify whether a paper is suitable for Neotoma and detect features such as 'Site Name', 'Location', 'Age Span' and 'Site Descriptions'.  
+Using Graph Databases and a Data Science approach, identify whether a paper is suitable for Neotoma and detect interesting features such as 'number of commits', 'last updates', 'number of linked repos' and 'linked databases'.  
 
-Baseline Model is Naive Bayes to classify if a Throughput article belongs or not to Neotoma.
+Baseline Model will be a Recommender System in unstructured Graph Databases and data will also tried to be structured to create a Recommendre System using Python.
 
 ## Contributors
 
@@ -31,68 +31,55 @@ This structure might be modified as the project progresses.
 ```bash
 throughput-ec/neotoma_recommender/
 ├── data
-│   ├── input                 # input data
-│   │     ├── neotoma_dummy   # data: paleoecology db - dummy file for reproducibility
-│   │     └── bibjson_dummy   # data: bibliography json dummy file for reproducibility
-│   ├── output                # output file
+│   ├── input                       # input data
+│   │     ├── throughput neo4j db   # data: paleoecology db - dummy file for reproducibility
+│   │     └── neotoma_db            # data: bibliography json dummy file for reproducibility
+│   ├── output                      # output file
 │   │     └── predictions.csv   # file to describe whether an article belongs to neotoma or not
-├── figures                   # all images or docs for explaining processes
-│   ├── img
-│   └── docs
-│   │     └── milestones                    
+├── img                        # all images or docs for explaining processes
+├── reports    
+│   ├── milestones
+│   └── supporting documents           
 ├── src    
-│   ├── modules               # 3 modules
-│   │   ├── preprocessing    
-│   │   │     └── data_preprocessing.py    # script to clean data
-│   │   ├── train                          # scripts for helping functions and training model
-│   │   │     ├── utils.py
-│   │   │     └── fit.py                 
-│   │   └──  predict                 # prediction scripts to validate test data and to try in new data
-│   │   │     └── predict.py       
-│   ├── tests                        # tests for the modules
-│   │   ├── test_preprocessing                                       
-│   │   ├── test_fit.py                      
-│   └── └── test_predict.py
+│   ├── preprocessing    
+│   │     └── data_preprocessing.py    # script to clean data
+│   ├── train                          # scripts for helping functions and training model
+│   │     ├── utils.py
+│   │     └── train.py                 
+│   └──  predict                 # prediction scripts to validate test data and to try in new data
+│   │     └── predict.py       
 ├── .gitignore
+├── config_sample.py             # file for credentials
 ├── CODE_OF_CONDUCT.md
-├── Dockerfile
 ├── LICENSE
 └── README.md
 ```
 
 ### Workflow Overview
 
-This project uses the GeoDeepDive output files:
-* `bibjson:` JSON file that contains bibliographic information.
-* `neotoma:` tsv file that contains Netoma paleoecology database information.
+This project uses the Throughput Graph Database as an input from neo4j:
+* `neotoma:` tsv file
 
-These files are used as input in a Naive Bayes baseline model that, once trained, should:
-* Predict whether a sentence has coordinates or not in it.
-
-
-TODO
-* We will then produce a recommendations system using Python to see if an article should be part of the Neotoma Database or not.
-
+These files are used as input that will help create a Recommender System.
+* Predict whether an article is suitable for Neotoma.
 * Create nodes in Throughput graph / Create a Graph for Neotoma Files
-* Create a recommendation system using Neo4j using Graph characteristics.
-
+* Benefit from operations using Graph Databases.
 
 ### System Requirements
 
-This project is developed using Python.  
+This project is developed using Python and Neo4j.  
 This project will need Neo4j installed.
 It runs on a MacOS system.
 Continuous integration uses TravisCI.
 
 ### Data Requirements
 
-The project pulls data from GeoDeepDive output files.
-For the sake of reproducibility, two dummy data files have been included.
+The project pulls data from the Throughput database.
 
 ### Key Outputs
 
-This project will generate a dataset that provides the following information:
-* Whether the paper is useful for Neotoma based on the title.
+This project will generate a structured dataset that provides the following information:
+* Whether the paper is useful for Neotoma based on its characteristics or not.
 
 ## Pipeline
 TODO:
@@ -103,69 +90,5 @@ TODO:
 
 ### Instructions
 
-There are currently two main functionalities for this repo.
-The first one is to run a Dashboard that will help us hand label new data in order to improve Record Mining predictions.
-
-If you are helping to hand label, these are the instructions you should follow:
-
-##### Docker neotoma_recommender
-TODO : verify and upload image
-
-If you are trying to get new predictions on never seen corpus, then follow these instructions:
-
-1. Clone/download this repository.
-2. Using the command line, go to the root directory of this repository.
-3. Get the [neotoma_recommender]() image from [DockerHub](https://hub.docker.com/) from the command line:
-```
-docker pull sedv8808/neotoma_recommender
-```
-4. Verify you are in the root directory of this project. Type the following (filling in *\<Path_on_your_computer\>* with the absolute path to the root of this project on your computer).
-
-```
-docker run -v /<Path_on_your_computer>/neotoma_recommender/data/input:/app/input
- -v /<Path_on_your_computer>/neotoma_recommender/data/output:/app/output neotoma_recommender:latest
-```
-5. You will get an output file with a timestamp. That file are your predictions. You can verify whether those outputs belong to Neotoma using a `Confusion Matrix`
-
-**IMPORTANT:** In order to run this docker file, you need to load in the `data` directory a `bibjson` file and a `neotoma` that respect the same format as the dummy files.
-
-##### Without Docker and to review other scripts.
-
-This repository consists of 4 Python scripts.
-
-In order to run this project, you need to:
-1. Clone or download this repository.
-
-2. Run the following code in the terminal at the project's root repository.
-To run the scripts:
-
-```
-# From the command line.
-
-# Load and preprocess data
-python3 src/modules/preprocessing/preprocess_data.py
-
-# Train model - Optional/Only when retraining is needed
-python3 src/modules/train/train.py
-
-# Predict on new data
-python3 src/modules/modelling/predict.py
-```
-
-
-##  Profiling
-Detailed profiling logs can be found on:
-```
-output/profiling
-```
-
-If you want to repeat a detailed profiling for each script, open `preprocess_data.py`, `fit.py` and `predict.py`.
-The scripts, at the bottom, have a commented chunk of code titled `Profiling`.
-This profiling is recommended to only be run once. Once you finished this, comment the chunk again.
-
-#### preprocess_data.py
-
-
-#### fit.py
-
-#### predict.py
+For now, only the notebook is available.
+There will be scripts shortly.
