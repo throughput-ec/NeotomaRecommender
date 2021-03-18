@@ -126,11 +126,13 @@ def create_all_df(all_data):
                    'cr_name': [],
                    'forks':[],
                    'commits':[],
-                   'contributors':[]}
+                   'contributors':[],
+                   'subject':[]}
 
     for i in range(0, len(all_data)-1):
         helper_dict['dacat'].append(all_data[i]['properties(dc)']['id'])
         helper_dict['dacat_name'].append(all_data[i]['properties(dc)']['name'])
+        helper_dict['subject'].append(all_data[i]['s.id'])
 
         try:
             helper_dict['meta'].append(all_data[i]['properties(cr)']['meta'])
@@ -164,8 +166,8 @@ def create_all_df(all_data):
 
     meta_df = pd.DataFrame(helper_dict)
     meta_df = meta_df[meta_df['meta'] != "None2"]
-    meta_df = meta_df[['dacat', 'dacat_name', 'cr_item', 'cr_name', 'forks', 'commits', 'contributors']]
-    meta_df = meta_df.astype({'cr_item':'str', 'forks': 'int64', 'commits': 'int64', 'contributors': 'int64'})
+    meta_df = meta_df[['dacat', 'dacat_name', 'cr_item', 'cr_name', 'forks', 'commits', 'contributors', 'subject']]
+    meta_df = meta_df.astype({'cr_item':'str', 'forks': 'int64', 'commits': 'int64', 'contributors': 'int64', 'subject': 'int64'})
     meta_df['cr_item'] = meta_df['cr_item']+'cr'
     meta_df['dacat'] = meta_df['dacat']+'dc'
 
